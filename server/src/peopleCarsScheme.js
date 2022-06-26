@@ -90,3 +90,5 @@ const cars = [
     personId: '3'
   }
 ]
+
+module.exports = {people, cars}

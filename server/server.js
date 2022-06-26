@@ -1,9 +1,10 @@
 import express from 'express'
-import { ApolloServer } from 'apollo-server-express'
+import { ApolloServer, gql } from 'apollo-server-express'
 import http from 'http'
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core'
 
 import { typeDefs, resolvers} from './src/schema'
+
 
 const startServer = async (typeDefs, resolvers) => {
     const app = express()
@@ -20,7 +21,7 @@ const startServer = async (typeDefs, resolvers) => {
 
     server.applyMiddleware({app})
 
-    await new Promise(resolve => httpServer.listen({ port: 4000 }, resolve))
+    await new Promise(resolve => httpServer.listen({ port: 8080 }, resolve))
 
     console.log(`Server listening at ${server.graphqlPath}`)
 }
