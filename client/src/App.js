@@ -1,15 +1,26 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
-import './App.css';
+import './App.css'
+import 'antd/dist/antd.min.css'
+import People from '../src/components/lists/People'
+import AddPerson from '../src/components/forms/AddPerson'
+import Header from './components/layout/Header'
+
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql',
+  uri: 'http://localhost:8080/graphql/',
   cache: new InMemoryCache()
 })
 
-function App() {
+const App = () => {
+
+
   return (
     <ApolloProvider client={client}>
-      <div className="App">App</div>
+      <div className='App'>
+        <Header/>
+        <AddPerson/>
+        <People/>
+      </div>
     </ApolloProvider>  
   );
 }
