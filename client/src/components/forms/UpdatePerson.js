@@ -26,11 +26,9 @@ const UpdatePerson = (props) => {
         })
 
         props.onClick()
-        console.log(firstName, lastName)
     }
 
     const updateVars = (variable, value) => {
-        props.updateVars(variable, value)
         switch (variable) {
           case 'firstName':
             setFirstName(value)
@@ -49,19 +47,14 @@ const UpdatePerson = (props) => {
         name='update-person-form'
         layout='inline'
         onFinish={onCompletion}
+        style={{marginBottom: '24px'}}
         >
-        <Form.Item
-            name='firstName'
-            rules={[{ required: true, message: 'Please input a firstname for the person.' }]}
-        >
+        <Form.Item name='firstName'>
             <Input placeholder='i.e. Henry'
                 onChange={e => updateVars('firstName', e.target.value)}  
             />
         </Form.Item>
-        <Form.Item
-            name='lastName'
-            rules={[{ required: true, message: 'Please input a lastname for the person.' }]}
-        >
+        <Form.Item name='lastName'>
             <Input placeholder='i.e. Williams' 
                 onChange={e => updateVars('lastName', e.target.value)}
             />
