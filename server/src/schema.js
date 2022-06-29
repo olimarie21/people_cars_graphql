@@ -1,38 +1,40 @@
 import { gql } from 'apollo-server-express'
-import { find, remove } from 'lodash'
+import { _, find, filter, remove } from 'lodash'
 import { people, cars } from './peopleCarsScheme'
 
 const typeDefs = gql`
+
     type Person {
         id: String!
-        firstName: String
-        lastName: String
+        firstName: String!
+        lastName: String!
     }
     
     type Car {
         id: String!
-        year: String
+        year: Int
         make: String
-        price: String
-        personId: String!
+        price: Float
+        personId: String
+        model: String
     }
 
     type Query {
-        person(id: String!): Person
         people: [Person]
-        personCars(personId: String!): [Car]
-        car(id: String!): Car
         cars: [Car]
+        filterCars(personId: String): [Car]
+        filterPeople(id: String): [Person]
     }
 
     type Mutation {
-        addPerson(id: String!, firstName: String!, lastName: String!): Person
+        addPerson(id: String, firstName: String!, lastName: String!): Person
         updatePerson(id: String!, firstName: String, lastName: String): Person
         deletePerson(id: String!): Person
 
-        addCar(id: String!, year: String!, make: String!, price: String!, personId: String!): Car
-        updateCar(id: String!, year: String, make: String, price: String, personId: String): Car
+        addCar(id: String!, year: Int!, make: String!, price: Float!, personId: String!, model: String!): Car
+        updateCar(id: String!, year: Int, make: String, price: Float, personId: String, model: String): Car
         deleteCar(id:String!): Car
+        deleteCars(personId: String!): [Car]
     }
 `
 
@@ -41,15 +43,14 @@ const resolvers = {
         people: () => {
             return people
         },
-        person(parent, args, context, info) {
-            return find(people, {id: args.id})
+        cars: () => {
+            return cars
         },
-        personCars(parent, args, context, info) {
-            return cars.filter(car => car.personId === args.personId)
+        filterPeople(parent, args, context, info) {
+            return filter(people, ['id', args.id])
         },
-        cars: () => cars,
-        car(parent, args, context, info) {
-            return find(cars, {id: args.id})
+        filterCars(parent, args, context, info) {
+            return filter(cars, ['personId', args.personId])
         }
     },
     Mutation: {
@@ -68,12 +69,9 @@ const resolvers = {
             if(!person) {
                 throw new Error(`No person with ${args.id} found.`)
             }
-
-            if(args.firstName) { 
-                person.firstName = args.firstName 
-            } if(args.lastName) {
-                person.lastName = args.lastName
-            }
+            
+            person.firstName = args.firstName 
+            person.lastName = args.lastName
 
             return person
         },
@@ -105,18 +103,12 @@ const resolvers = {
             if(!car) {
                 throw new Error(`No car with ${args.id} found.`)
             }
-
-            if(args.year) { 
-                car.year = args.year 
-            } if(args.make) {
-                car.make = args.make
-            } if(args.model) {
-                car.model = args.model
-            } if(args.price) {
-                car.price = args.price
-            } if(args.personId) {
-                car.personId = args.personId
-            }
+            
+            car.year = args.year 
+            car.make = args.make
+            car.model = args.model
+            car.price = args.price
+            car.personId = args.personId
 
             return car
         },
@@ -129,6 +121,12 @@ const resolvers = {
             remove(cars, {id: args.id})
 
             return deletedCar
+        },
+        deleteCars(root, args) {
+            const deletedCars = filter(cars, ['personId', args.personId])
+            remove(cars, ['personId', args.personId])
+
+            return deletedCars
         }
     }
 }
