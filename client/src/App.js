@@ -1,9 +1,9 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import './App.css'
 import 'antd/dist/antd.min.css'
+import { Routes, Route } from "react-router-dom"
 import People from '../src/components/lists/People'
-import AddPerson from '../src/components/forms/AddPerson'
-import Header from './components/layout/Header'
+import Details from './components/detail/Details'
 
 
 const client = new ApolloClient({
@@ -12,14 +12,13 @@ const client = new ApolloClient({
 })
 
 const App = () => {
-
-
   return (
     <ApolloProvider client={client}>
       <div className='App'>
-        <Header/>
-        <AddPerson/>
-        <People/>
+      <Routes>
+        <Route path="/" element={<People/>} />
+        <Route path="/:id" element={<Details/>}/>
+      </Routes>
       </div>
     </ApolloProvider>  
   );
