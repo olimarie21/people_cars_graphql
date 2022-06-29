@@ -3,14 +3,20 @@ import { Card } from 'antd'
 import { EditOutlined } from '@ant-design/icons'
 import UpdatePerson from '../forms/UpdatePerson'
 import DeleteBtn from '../buttons/DeleteBtn'
-import { GET_CAR_LIST } from '../../queries'
+import { GET_CARS } from '../../queries'
 import { useQuery } from '@apollo/client'
 import Car from './Car'
+import { Link } from "react-router-dom";
+import Details from '../detail/Details'
 
 
 const getStyles = () => ({
   personCard: {
-    width: '500px'
+    width: '700px'
+  },
+  learnMore: {
+    textAlign: 'right',
+    marginTop: '24px'
   }
 })
 
@@ -25,38 +31,18 @@ const Person = props => {
         setEditMode(!editMode)
     }
 
-    const personId = props.id
-    const { loading, error, data } = useQuery(GET_CAR_LIST, {
-        variables: {personId}
-    })
-
+    const { loading, error, data } = useQuery(GET_CARS)
     if (loading) return 'Loading...'
     if (error) return `Error! ${error.message}`
-    console.log('personCars', data.personCars)
-
-    const updateVars = (variable, value) => {
-        switch (variable) {
-        case 'firstName':
-            setFirstName(value)
-            break
-        case 'lastName':
-            setLastName(value)
-            break
-        default:
-            break
-        }
-    }
 
     return (
         <div>
         <Card
-        extra={<a href="#">Learn More</a>}
-        title={`${firstName} ${lastName}`}
-        actions={[
-            <EditOutlined key='edit' onClick={handleClick} />,
-            <DeleteBtn id={id} />
-        ]}
-        style={styles.personCard}
+            title={`${firstName} ${lastName}`}
+            actions={[
+                <EditOutlined key='edit' onClick={handleClick} />,
+                <DeleteBtn id={id} />]}
+            style={styles.personCard}
         >
         {editMode ? (
             <UpdatePerson
@@ -64,20 +50,25 @@ const Person = props => {
             firstName={props.firstName}
             lastName={props.lastName}
             onClick={handleClick}
-            updateVars={updateVars}
             onBtnClick={handleClick}
             />
             ) : ( null )} 
-        {data.personCars.map((car, index) => (
-            <Car
-                key={index}
-                make={car.make}
-                model={car.model}
-                year={car.year}
-                price={car.price}
-                id={car.id}
-            />
-        ))}
+        {data.cars.map((car, index) => (
+            car.personId === props.id ? (
+                <Car
+                    key={index}
+                    make={car.make}
+                    model={car.model}
+                    year={car.year}
+                    price={car.price}
+                    id={car.id}
+                />
+                ) : null 
+            ))}
+            <Link 
+            to={{pathname: `/${id}`}}
+            element={<Details/>}>
+            <div style={styles.learnMore}>Learn More</div></Link>
         </Card>
         </div>
     )
