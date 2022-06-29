@@ -23,7 +23,7 @@ const startServer = async (typeDefs, resolvers) => {
 
     await new Promise(resolve => httpServer.listen({ port: 8080 }, resolve))
 
-    console.log(`Server listening at ${server.graphqlPath}`)
+    console.log(`Server listening at localhost8080:${server.graphqlPath}`)
 }
 
 startServer(typeDefs, resolvers)
